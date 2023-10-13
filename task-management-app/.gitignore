@@ -76,3 +76,5 @@ buck-out/
 /dist/
 
 firebase-debug.log
+
+.env
