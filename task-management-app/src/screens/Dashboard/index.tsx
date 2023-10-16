@@ -1,18 +1,15 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../../providers/AuthProvider/context';
-import { Navigate, useNavigate } from 'react-router';
+import React from 'react';
+import { useNavigate } from 'react-router';
+import { Components } from './styled';
+import List from './components/List';
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const { signOutWithGoogle } = useContext(AuthContext);
-
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <button onClick={() => navigate('/')}>Go to home</button>
-      <button onClick={signOutWithGoogle}>Sign out</button>
-    </div>
+    <Components.Container>
+      <List />
+    </Components.Container>
   );
 };
 

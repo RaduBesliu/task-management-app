@@ -1,16 +1,17 @@
 import { Routes, Route } from 'react-router';
 import Dashboard from './screens/Dashboard';
 import { BrowserRouter } from 'react-router-dom';
-import Login from './screens/Login';
 import NotFound from './screens/NotFound';
 import Providers from './providers';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Home from './screens/Home';
+import NavBar from './components/NavBar';
 
 const App = () => {
   return (
     <BrowserRouter>
       <Providers>
+        <NavBar />
         <Routes>
           <Route index element={<Home />} />
           <Route
@@ -21,7 +22,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-          <Route path={'/login'} element={<Login />} />
           <Route path={'*'} element={<NotFound />} />
         </Routes>
       </Providers>

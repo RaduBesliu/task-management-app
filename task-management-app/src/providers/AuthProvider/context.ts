@@ -1,8 +1,9 @@
 import React from 'react';
-import { User } from 'firebase/auth';
+import firebase from 'firebase/compat/app';
+import UserInfo = firebase.UserInfo;
 
 export interface AuthContextType {
-  user?: User;
+  user?: UserInfo;
   signInWithGoogle: () => Promise<void>;
   signOutWithGoogle: () => Promise<void>;
 }
