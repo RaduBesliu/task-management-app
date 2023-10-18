@@ -5,4 +5,6 @@ export interface List {
   title: string;
   taskLimit?: number;
   tasks: Task[];
+  color: string;
+  textColor: string;
 }
