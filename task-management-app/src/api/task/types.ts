@@ -5,4 +5,5 @@ export interface Task {
   color: string;
   textColor: string;
   isCompleted: boolean;
+  userId: string;
 }

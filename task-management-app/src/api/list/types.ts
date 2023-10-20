@@ -7,4 +7,5 @@ export interface List {
   tasks: Task[];
   color: string;
   textColor: string;
+  userId: string;
 }
