@@ -8,6 +8,7 @@ export const Components = {
     background-color: #fff;
     border-radius: 32px;
     padding: 32px;
+    position: relative;
   `,
 
   ColorPickersContainer: styled.div`

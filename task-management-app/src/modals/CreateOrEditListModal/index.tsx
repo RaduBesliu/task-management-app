@@ -7,16 +7,21 @@ import { Button } from 'react-bootstrap';
 import { List } from '../../api/list/types';
 import { generateRandomFirebaseId } from '../../utils';
 import { AuthContext } from '../../providers/AuthProvider/context';
-import { createList } from '../../api/list';
+import { createList, updateList } from '../../api/list';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faX } from '@fortawesome/free-solid-svg-icons';
+import IconWrapper from '../../components/IconWrapper';
 
-const CreateListModal = ({
+const CreateOrEditListModal = ({
   isOpen,
   onClose,
   setLists,
+  modalState,
 }: {
   isOpen: boolean;
   onClose: () => void;
   setLists: Dispatch<SetStateAction<List[]>>;
+  modalState?: List;
 }) => {
   const { user } = useContext(AuthContext);
 
@@ -37,25 +42,30 @@ const CreateListModal = ({
   };
 
   const formik = useFormik({
-    initialValues: {
-      title: '',
-      color: '#fff',
-      textColor: '#000',
-      taskLimit: 0,
-    },
     validate,
+    enableReinitialize: true,
+    initialValues: {
+      title: modalState?.title || '',
+      color: modalState?.color || '#fff',
+      textColor: modalState?.textColor || '#000',
+      taskLimit: modalState?.taskLimit || 0,
+    },
     onSubmit: async (values) => {
       const _list = {
         ...values,
-        tasks: [],
+        tasks: modalState?.tasks || [],
         taskLimit: values.taskLimit ? values.taskLimit : 0,
-        id: generateRandomFirebaseId(),
+        id: modalState?.id || generateRandomFirebaseId(),
         userId: user?.uid,
       } as List;
 
-      setLists((prevLists) => [...prevLists, _list]);
-
-      await createList(_list);
+      if (modalState) {
+        setLists((prevLists) => prevLists.map((list) => (list.id === _list.id ? _list : list)));
+        await updateList(modalState.id, _list);
+      } else {
+        setLists((prevLists) => [...prevLists, _list]);
+        await createList(_list);
+      }
 
       onClose();
     },
@@ -64,6 +74,9 @@ const CreateListModal = ({
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <Components.Container>
+        <IconWrapper onClick={onClose} top={8} left={8}>
+          <FontAwesomeIcon icon={faX} />
+        </IconWrapper>
         <TextField
           label={'Title'}
           value={formik.values.title}
@@ -98,11 +111,11 @@ const CreateListModal = ({
           </Components.ColorPickerContainer>
         </Components.ColorPickersContainer>
         <Button variant='primary' onClick={() => formik.handleSubmit()} style={{ width: '100%', height: '48px' }}>
-          Create
+          {modalState ? 'Edit list' : 'Create list'}
         </Button>
       </Components.Container>
     </Dialog>
   );
 };
 
-export default CreateListModal;
+export default CreateOrEditListModal;
