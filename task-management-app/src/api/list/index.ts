@@ -17,6 +17,6 @@ export const deleteList = async (id: string) => {
   await db.collection('lists').doc(id).delete();
 };
 
-export const updateList = async (id: string, list: List) => {
+export const updateList = async (id: string, list: any) => {
   await db.collection('lists').doc(id).update(list);
 };

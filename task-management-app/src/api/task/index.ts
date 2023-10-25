@@ -14,3 +14,15 @@ export const getTasksByIds = async (ids: string[]) => {
 
   return tasks;
 };
+
+export const createTask = async (task: Task) => {
+  await db.collection('tasks').doc(task.id).set(task);
+};
+
+export const updateTask = async (id: string, task: Task) => {
+  await db.collection('tasks').doc(id).update(task);
+};
+
+export const deleteTask = async (id: string) => {
+  await db.collection('tasks').doc(id).delete();
+};

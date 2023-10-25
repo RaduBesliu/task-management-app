@@ -1,27 +1,31 @@
 import React, { Dispatch, SetStateAction, useContext } from 'react';
 import { Components } from './styled';
-import { Dialog, TextField } from '@mui/material';
+import { Task } from '../../api/task/types';
 import { useFormik } from 'formik';
+import { generateRandomFirebaseId } from '../../utils';
+import { AuthContext } from '../../providers/AuthProvider/context';
+import { Dialog, TextField } from '@mui/material';
+import IconWrapper from '../../components/IconWrapper';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faX } from '@fortawesome/free-solid-svg-icons';
 import { ChromePicker, ColorResult } from 'react-color';
 import { Button } from 'react-bootstrap';
 import { List } from '../../api/list/types';
-import { generateRandomFirebaseId } from '../../utils';
-import { AuthContext } from '../../providers/AuthProvider/context';
-import { createList, updateList } from '../../api/list';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faX } from '@fortawesome/free-solid-svg-icons';
-import IconWrapper from '../../components/IconWrapper';
+import { updateList } from '../../api/list';
+import { createTask, updateTask } from '../../api/task';
 
-const CreateOrEditListModal = ({
+const CreateOrEditTaskModal = ({
   isOpen,
   onClose,
+  list,
   setLists,
   modalState,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  list: List;
   setLists: Dispatch<SetStateAction<List[]>>;
-  modalState?: List;
+  modalState?: Task;
 }) => {
   const { user } = useContext(AuthContext);
 
@@ -34,8 +38,8 @@ const CreateOrEditListModal = ({
       errors.title = 'The title must be 40 characters or less';
     }
 
-    if (values.taskLimit && values.taskLimit < 0) {
-      errors.taskLimit = 'The task limit must be greater than 0';
+    if (values.description && values.description.length > 200) {
+      errors.description = 'The description must be 200 characters or less';
     }
 
     return errors;
@@ -46,29 +50,54 @@ const CreateOrEditListModal = ({
     enableReinitialize: true,
     initialValues: {
       title: modalState?.title || '',
+      description: modalState?.description || '',
       color: modalState?.color || '#fff',
       textColor: modalState?.textColor || '#000',
-      taskLimit: modalState?.taskLimit || 0,
     },
     onSubmit: async (values) => {
-      const _list = {
+      const _task = {
         ...values,
-        tasks: modalState?.tasks || [],
-        taskLimit: values.taskLimit ? values.taskLimit : 0,
         id: modalState?.id || generateRandomFirebaseId(),
         userId: user?.uid,
-      } as List;
+        isCompleted: modalState?.isCompleted || false,
+      } as Task;
 
       if (modalState) {
-        setLists((prevLists) => prevLists.map((list) => (list.id === _list.id ? _list : list)));
+        setLists((prev) => {
+          const _prev = [...prev];
+          const listToUpdate = _prev.find((_list) => _list.id === list.id);
+          if (listToUpdate) {
+            listToUpdate.tasks = listToUpdate.tasks.map((__task) => (__task.id === modalState?.id ? _task : __task));
+          }
+
+          return _prev;
+        });
+
         const _firebaseList = {
-          ..._list,
-          tasks: _list.tasks.map((task) => task.id),
+          ...list,
+          tasks: list.tasks.map((task) => task.id),
         };
-        await updateList(modalState.id, _firebaseList);
+
+        await updateList(list.id, _firebaseList);
+        await updateTask(_task.id, _task);
       } else {
-        setLists((prevLists) => [...prevLists, _list]);
-        await createList(_list);
+        setLists((prev) => {
+          const _prev = [...prev];
+          const listToUpdate = _prev.find((_list) => _list.id === list.id);
+          if (listToUpdate) {
+            listToUpdate.tasks = [...listToUpdate.tasks, _task];
+          }
+
+          return _prev;
+        });
+
+        const _firebaseList = {
+          ...list,
+          tasks: list.tasks.map((task) => task.id),
+        };
+
+        await updateList(list.id, _firebaseList);
+        await createTask(_task);
       }
 
       onClose();
@@ -90,13 +119,12 @@ const CreateOrEditListModal = ({
           helperText={formik.touched.title && formik.errors.title}
         />
         <TextField
-          label={'Task limit'}
-          value={formik.values.taskLimit}
-          onChange={formik.handleChange('taskLimit')}
+          label={'Description'}
+          value={formik.values.description}
+          onChange={formik.handleChange('description')}
           style={{ width: '100%', marginTop: 32 }}
-          type={'number'}
-          error={formik.touched.taskLimit && Boolean(formik.errors.taskLimit)}
-          helperText={formik.touched.taskLimit && formik.errors.taskLimit}
+          error={formik.touched.description && Boolean(formik.errors.description)}
+          helperText={formik.touched.description && formik.errors.description}
         />
         <Components.ColorPickersContainer>
           <Components.ColorPickerContainer>
@@ -115,11 +143,11 @@ const CreateOrEditListModal = ({
           </Components.ColorPickerContainer>
         </Components.ColorPickersContainer>
         <Button variant='primary' onClick={() => formik.handleSubmit()} style={{ width: '100%', height: '48px' }}>
-          {modalState ? 'Edit list' : 'Create list'}
+          {modalState ? 'Edit task' : 'Create task'}
         </Button>
       </Components.Container>
     </Dialog>
   );
 };
 
-export default CreateOrEditListModal;
+export default CreateOrEditTaskModal;
