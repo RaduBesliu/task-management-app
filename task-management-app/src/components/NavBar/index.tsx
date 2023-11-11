@@ -22,14 +22,13 @@ const NavBar = () => {
           <Nav.Link onClick={() => navigate('/dashboard')} className={'text-light'}>
             Dashboard
           </Nav.Link>
+          <Nav.Link onClick={() => navigate('/settings')} className={'text-light'}>
+            Settings
+          </Nav.Link>
         </Nav>
       </Navbar.Collapse>
       <Navbar.Text>
-        {user ? (
-          <Button variant='danger' onClick={signOutWithGoogle}>
-            Sign out
-          </Button>
-        ) : (
+        {!user && (
           <Button variant='success' onClick={signInWithGoogle}>
             Sign in
           </Button>

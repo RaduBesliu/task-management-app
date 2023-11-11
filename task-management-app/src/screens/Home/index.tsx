@@ -1,12 +1,9 @@
 import React from 'react';
-import { useNavigate } from 'react-router';
 
 const Home = () => {
-  const navigate = useNavigate();
-
   return (
     <div>
-      <h1>Home</h1>
+      <h1 style={{ textAlign: 'center', marginTop: 48 }}>Welcome to Task Management App</h1>
     </div>
   );
 };

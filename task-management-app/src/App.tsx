@@ -6,6 +6,7 @@ import Providers from './providers';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Home from './screens/Home';
 import NavBar from './components/NavBar';
+import Settings from './screens/Settings';
 
 const App = () => {
   return (
@@ -19,6 +20,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={'/settings'}
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             }
           />
