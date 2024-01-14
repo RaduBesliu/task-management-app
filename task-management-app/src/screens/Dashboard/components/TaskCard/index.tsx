@@ -28,6 +28,7 @@ const TaskCard = ({
         {task.isCompleted ? <FontAwesomeIcon icon={faSquareCheck} /> : <FontAwesomeIcon icon={faSquare} />}
       </IconWrapper>
       <Components.CardTitle>{task.title}</Components.CardTitle>
+      <Components.CardDescription>{task.description}</Components.CardDescription>
     </Components.Container>
   );
 };

@@ -17,4 +17,8 @@ export const Components = {
     font-size: 16px;
     font-weight: bold;
   `,
+
+  CardDescription: styled.p`
+    font-size: 14px;
+  `,
 };

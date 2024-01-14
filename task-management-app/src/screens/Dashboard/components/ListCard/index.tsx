@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Components } from './styled';
 import { List } from '../../../../api/list/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,7 +9,7 @@ import TaskCard from '../TaskCard';
 import { Task } from '../../../../api/task/types';
 import { deleteTask, updateTask } from '../../../../api/task';
 import CreateOrEditTaskModal from '../../../../modals/CreateOrEditTaskModal';
-import { deleteList, updateList } from '../../../../api/list';
+import { updateList } from '../../../../api/list';
 
 const ListCard = ({
   list,
@@ -30,6 +30,11 @@ const ListCard = ({
   const _invertedColor = invertHex(list.color);
 
   const onCreateTaskClick = () => {
+    if (list.taskLimit && list.tasks.length >= list.taskLimit) {
+      alert(`You can't add more than ${list.taskLimit} ${list.taskLimit === 1 ? 'task' : 'tasks'} to this list.`);
+      return;
+    }
+
     setModalState(undefined);
     setIsModalOpen(true);
   };

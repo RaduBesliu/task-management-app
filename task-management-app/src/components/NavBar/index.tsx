@@ -6,11 +6,14 @@ import { AuthContext } from '../../providers/AuthProvider/context';
 const NavBar = () => {
   const navigate = useNavigate();
 
-  const { user, signInWithGoogle, signOutWithGoogle } = useContext(AuthContext);
+  const { user, signInWithGoogle } = useContext(AuthContext);
 
   return (
     <Navbar expand={'lg'} className={'bg-dark pe-3 ps-3'}>
-      <Navbar.Toggle aria-controls='basic-navbar-nav' />
+      <Navbar.Toggle aria-controls='basic-navbar-nav' style={{
+        border: '1px solid #fff',
+      }}
+      />
       <Navbar.Brand href={'/'} className={'text-light'}>
         Task Management App
       </Navbar.Brand>
